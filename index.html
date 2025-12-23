@@ -1,544 +1,286 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام الفواتير - Technical Report</title>
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --accent-color: #2980b9;
-            --success-color: #27ae60;
-            --bg-color: #ecf0f1;
+!DOCTYPE html
+html lang=ar dir=rtl
+head
+    meta charset=UTF-8
+    meta name=viewport content=width=device-width, initial-scale=1.0
+    titleالمواصفات الفنية - مركز القيادة الطبيtitle
+    
+    link rel=preconnect href=httpsfonts.googleapis.com
+    link rel=preconnect href=httpsfonts.gstatic.com crossorigin
+    link href=httpsfonts.googleapis.comcss2family=Tajawalwght@300;400;500;700;800&display=swap rel=stylesheet
+
+    script src=httpspolyfill.iov3polyfill.min.jsfeatures=es6script
+    script id=MathJax-script async src=httpscdn.jsdelivr.netnpmmathjax@3es5tex-mml-chtml.jsscript
+
+    style
+        root {
+            --primary-color #0f172a;
+            --accent-color #0284c7;
+            --text-color #334155;
+            --bg-color #ffffff;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 20px;
+            font-family 'Tajawal', sans-serif;
+            color var(--text-color);
+            background-color #f8fafc;
+            line-height 1.6;
+            margin 0;
+            padding 20px;
         }
 
-        /* تنسيق التبويبات */
-        .tabs {
-            max-width: 850px;
-            margin: 0 auto;
-            display: flex;
-            gap: 10px;
-            margin-bottom: 0;
-        }
-
-        .tab-btn {
-            padding: 12px 25px;
-            background: #bdc3c7;
-            border: none;
-            border-radius: 8px 8px 0 0;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 16px;
-            flex: 1;
-            transition: 0.3s;
-        }
-
-        .tab-btn.active {
-            background: white;
-            color: var(--accent-color);
-            border-top: 3px solid var(--accent-color);
-        }
-
-        /* حاوية النموذج */
         .container {
-            background: white;
-            max-width: 850px;
-            margin: 0 auto;
-            padding: 30px;
-            border-radius: 0 0 8px 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            min-height: 500px;
+            max-width 210mm;  عرض ورقة A4 
+            margin 0 auto;
+            background var(--bg-color);
+            padding 40px;
+            box-shadow 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius 8px;
         }
 
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.5s;
+         تنسيق الهيدر 
+        header {
+            text-align center;
+            border-bottom 2px solid var(--primary-color);
+            padding-bottom 20px;
+            margin-bottom 30px;
         }
 
-        .tab-content.active {
-            display: block;
+        h1 {
+            color var(--primary-color);
+            font-size 24pt;
+            margin-bottom 5px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .subtitle {
+            color #64748b;
+            font-size 14pt;
+            font-weight 500;
         }
 
-        h2, h3 {
-            color: var(--primary-color);
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-            margin-top: 0;
+         تنسيق الأقسام 
+        h2 {
+            color var(--accent-color);
+            font-size 18pt;
+            border-right 5px solid var(--accent-color);
+            padding-right 10px;
+            margin-top 30px;
+            background #f0f9ff;
+            padding 10px;
         }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+        h3 {
+            color var(--primary-color);
+            font-size 14pt;
+            margin-top 20px;
         }
 
-        .full-width {
-            grid-column: span 2;
+        p, li {
+            font-size 12pt;
+            text-align justify;
         }
 
-        .form-group {
-            margin-bottom: 15px;
+         صناديق المعادلات 
+        .equation-box {
+            background-color #f8fafc;
+            border 1px solid #e2e8f0;
+            border-radius 8px;
+            padding 15px;
+            margin 20px 0;
+            text-align center;
+            font-size 1.2em;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-            font-size: 14px;
+         الجداول 
+        table {
+            width 100%;
+            border-collapse collapse;
+            margin 20px 0;
+            font-size 11pt;
         }
 
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 14px;
+        th, td {
+            border 1px solid #cbd5e1;
+            padding 12px;
+            text-align center;
         }
 
-        .form-group input:focus {
-            border-color: var(--accent-color);
-            outline: none;
+        th {
+            background-color var(--primary-color);
+            color white;
         }
 
-        /* حقول القراءة فقط */
-        .readonly-field {
-            background-color: #f8f9fa;
-            border-color: #e9ecef;
-            color: #495057;
-            font-weight: bold;
+        trnth-child(even) {
+            background-color #f1f5f9;
         }
 
-        /* الأزرار */
-        .btn-action {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            margin-top: 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
+         زر الطباعة 
+        .print-btn {
+            position fixed;
+            top 20px;
+            left 20px;
+            background var(--accent-color);
+            color white;
+            border none;
+            padding 10px 20px;
+            border-radius 5px;
+            cursor pointer;
+            font-family 'Tajawal', sans-serif;
+            font-weight bold;
+            box-shadow 0 4px 6px rgba(0,0,0,0.2);
+            z-index 1000;
         }
+        .print-btnhover { background #0369a1; }
 
-        .btn-save {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .btn-print {
-            background-color: var(--success-color);
-            color: white;
-        }
-
-        .btn-print:hover { background-color: #219150; }
-        .btn-save:hover { background-color: #1a252f; }
-
-        /* ==================== تنسيق الطباعة (مخفي) ==================== */
-        #print-view {
-            display: none;
-            background: white;
-            width: 210mm;
-            min-height: 297mm;
-            padding: 10mm;
-            margin: 0 auto;
-            color: black;
-            font-family: Arial, sans-serif;
-            box-sizing: border-box;
-            direction: ltr; /* التقرير بالإنجليزي */
-        }
-
-        .report-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 10px;
-            font-size: 12px;
-        }
-
-        .report-table th, .report-table td {
-            border: 1px solid black;
-            padding: 4px 8px;
-            text-align: left;
-        }
-        
-        .no-border td { border: none; }
-
-        .header-title {
-            text-align: center;
-            font-weight: bold;
-            text-decoration: underline;
-            margin-bottom: 20px;
-            font-size: 16px;
-        }
-
-        .signatures {
-            margin-top: 40px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .signature-box {
-            width: 40%;
-            text-align: center;
-        }
-
-        /* ==================== إعدادات الميديا للطباعة ==================== */
+         إعدادات الطباعة 
         @media print {
-            body * {
-                visibility: hidden;
+            body { background-color white; padding 0; }
+            .container { 
+                box-shadow none; 
+                margin 0; 
+                width 100%; 
+                max-width 100%; 
+                padding 20px;
             }
-            #print-view, #print-view * {
-                visibility: visible;
-            }
-            #print-view {
-                display: block;
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                margin: 0;
-                padding: 10mm;
-            }
-            @page {
-                size: A4;
-                margin: 0;
-            }
+            .print-btn { display none; }  إخفاء الزر عند الطباعة 
+            h2 { background none; border none; border-bottom 2px solid #ccc; }
+            .equation-box { border 1px solid #000; }
         }
-    </style>
-</head>
-<body>
+    style
+head
+body
 
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('invoice')">بيانات الفاتورة (Invoice)</button>
-        <button class="tab-btn" onclick="switchTab('settings')">الإعدادات والثوابت (Settings)</button>
-    </div>
+    button class=print-btn onclick=window.print()🖨️ طباعة التقرير (PDF)button
 
-    <div class="container">
-        
-        <div id="invoice-tab" class="tab-content active">
-            <h2>إدخال البيانات المتغيرة</h2>
-            <div class="form-grid">
-                <div class="form-group"><label>التاريخ (Date):</label><input type="date" id="in_date"></div>
-                <div class="form-group"><label>رقم الفاتورة (Invoice #):</label><input type="text" id="in_inv_num"></div>
-                
-                <div class="form-group"><label>اسم المورد (Vendor Eng):</label><input type="text" id="in_vendor_eng"></div>
-                <div class="form-group"><label>اسم المورد (عربي):</label><input type="text" id="in_vendor_arab"></div>
-                
-                <div class="form-group"><label>رقم أمر الشراء (FGC PO#):</label><input type="text" id="in_fgc_po"></div>
-                <div class="form-group"><label>تاريخ الفاتورة (Inv. Date):</label><input type="date" id="in_inv_date"></div>
+    div class=container
+        header
+            h1المواصفات الفنية والمعادلات الرياضيةh1
+            div class=subtitleنظام المراقبة الطبي الذكي (Medical AI Command Center)div
+            pstrongالإصدارstrong 2.0 (Dynamic Physics Engine)p
+        header
 
-                <div class="full-width"><hr></div>
+        section
+            h21. المقدمة (Introduction)h2
+            p
+                يقوم النظام على خوارزمية تقييم مخاطر متعددة المتغيرات. لا يكتفي النظام بقراءة البيانات الحالية، بل يقوم بمعالجتها عبر strongنموذج تدهور خطي (Linear Degradation Model)strong لربط عمر المكونات المادية (Hardware Age) بالقدرة التشغيلية المسموح بها، مما يضمن أطول عمر افتراضي للأجهزة.
+            p
+        section
 
-                <div class="form-group">
-                    <label>المبلغ الأساسي (Amount):</label>
-                    <input type="number" step="0.01" id="in_amount" oninput="calculateFinancials()" placeholder="أدخل المبلغ هنا">
-                </div>
-                
-                <div class="form-group">
-                    <label>ضريبة القيمة المضافة (VAT): <small id="vat_display_rate"></small></label>
-                    <input type="text" id="in_vat" class="readonly-field" readonly>
-                </div>
-                
-                <div class="form-group full-width">
-                    <label>الإجمالي (Total Amount):</label>
-                    <input type="text" id="in_total" class="readonly-field" readonly style="font-size: 18px; color: #2c3e50;">
-                </div>
+        section
+            h22. المعادلة المحورية الإجهاد الديناميكيh2
+            p
+                يتم حساب الحد الآمن لساعات التشغيل اليومية ((H_{safe})) بناءً على عمر أنبوب الأشعة، وفقاً للمعادلات التالية
+            p
 
-                <div class="form-group full-width">
-                    <label>فقط (SAR):</label>
-                    <input type="text" id="in_words" class="readonly-field" readonly>
-                </div>
-            </div>
-            <button class="btn-action btn-print" onclick="printReport()">طباعة التقرير</button>
-        </div>
+            h3أ. حساب معامل الاستهلاك ((eta))h3
+            div class=equation-box
+                $$ eta = min left( 1, frac{T_{current}}{T_{max}} right) $$
+            div
+            ul
+                listrong(T_{current})strong عمر التيوب الحالي.li
+                listrong(T_{max})strong العمر الافتراضي الأقصى (200k للـ CT، و 50k للباقي).li
+            ul
 
-        <div id="settings-tab" class="tab-content">
-            <h2>إعداد الثوابت (يتم حفظها تلقائياً)</h2>
-            <p style="color: #666; font-size: 13px;">هذه البيانات ستظهر ثابتة في كل الفواتير ولا تحتاج لإدخالها كل مرة.</p>
-            
-            <div class="form-grid">
-                <div class="form-group"><label>Division Name:</label><input type="text" id="set_division"></div>
-                <div class="form-group"><label>Section Name:</label><input type="text" id="set_section"></div>
-                <div class="form-group"><label>Project Name:</label><input type="text" id="set_project"></div>
-                <div class="form-group"><label>Site Name:</label><input type="text" id="set_site"></div>
-                <div class="form-group"><label>Site Ref.#:</label><input type="text" id="set_site_ref"></div>
-                <div class="form-group"><label>Prepared By (Name):</label><input type="text" id="set_prepared"></div>
-                
-                <div class="form-group full-width">
-                    <label>نسبة الضريبة (VAT %) - كرقم صحيح:</label>
-                    <input type="number" id="set_vat_rate" value="15" placeholder="15">
-                </div>
-            </div>
-            <button class="btn-action btn-save" onclick="saveSettings()">حفظ الإعدادات</button>
-        </div>
+            h3ب. حساب الحد الآمن للساعات ((H_{safe}))h3
+            p
+                نفترض أن الجهاز الجديد يتحمل 14 ساعة، والمتهالك يتحمل 4 ساعات فقط. يتم حساب الحد المسموح به ديناميكياً
+            p
+            div class=equation-box
+                $$ H_{safe} = 14 - (10 times eta) $$
+            div
+            p
+                emتفسيرem كلما زاد معامل الاستهلاك ((eta))، انخفض عدد الساعات المسموح به، مما يطلق تنبيه إجهاد تشغيل مبكراً للأجهزة القديمة.
+            p
+        section
 
-    </div>
+        section
+            h23. خوارزمية حساب مؤشر الخطر (Risk Scoring)h2
+            p
+                يتم حساب مؤشر الخطر الكلي ((S_{total})) بجمع أوزان الأخطاء النشطة
+            p
+            div class=equation-box
+                $$ S_{total} = min left( 100, sum (W_i times F_i) right) $$
+            div
 
-    <div id="print-view">
-        <div class="header-title">
-            Technical Report<br>
-            SPARE PARTS SETTLEMENT INVOICE
-        </div>
+            h3جدول الأوزان والمتغيرات ((W_i))h3
+            table
+                thead
+                    tr
+                        thالجهاز  الفئةth
+                        thالمتغير (Variable)th
+                        thالشرط (Condition)th
+                        thالوزن (Weight)th
+                    tr
+                thead
+                tbody
+                    tr
+                        td rowspan=3عام (Global)td
+                        tdحرارة الغرفةtd
+                        td 24°Ctd
+                        td15td
+                    tr
+                    tr
+                        tdالرطوبةtd
+                        td 70%td
+                        td20td
+                    tr
+                    tr
+                        tdالإجهاد التشغيليtd
+                        td(H_{actual}  H_{safe})td
+                        td20td
+                    tr
+                    tr
+                        td rowspan=2الرنين (MRI)td
+                        tdمستوى الهيليومtd
+                        td 40%td
+                        td50 (حرج)td
+                    tr
+                    tr
+                        tdضغط الضاغطtd
+                        tdخارج (15-25)td
+                        td40td
+                    tr
+                    tr
+                        td rowspan=2المقطعية (CT)td
+                        tdحرارة الجانتريtd
+                        td 85°Ctd
+                        td50 (حرج)td
+                    tr
+                    tr
+                        tdالشرارة (Arcing)td
+                        td 0td
+                        td40td
+                    tr
+                    tr
+                        tdأشعة (X-Ray)td
+                        tdفشل التصويرtd
+                        td 3 مراتtd
+                        td45td
+                    tr
+                tbody
+            table
+        section
 
-        <table class="report-table no-border" style="width: 100%; margin-bottom: 20px;">
-            <tr>
-                <td style="width: 60%;"></td> 
-                <td style="width: 15%; font-weight: bold;">Date :</td>
-                <td style="width: 25%; border-bottom: 1px solid #000;"><span id="out_date"></span></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td style="font-weight: bold;">Division Name :</td>
-                <td style="border-bottom: 1px solid #000;"><span id="out_division"></span></td>
-            </tr>
-            <tr>
-                <td style="font-weight: bold;">33</td>
-                <td style="font-weight: bold;">Section Name :</td>
-                <td style="border-bottom: 1px solid #000;"><span id="out_section"></span></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td style="font-weight: bold;">Project Name :</td>
-                <td style="border-bottom: 1px solid #000;"><span id="out_project"></span></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td style="font-weight: bold;">Site Name :</td>
-                <td style="border-bottom: 1px solid #000;"><span id="out_site"></span></td>
-            </tr>
-            <tr>
-                <td colspan="3" style="padding-top: 10px;">Supporting Documentation Attached: <b>Serial No :</b> ________________</td>
-            </tr>
-        </table>
+        section
+            h24. منطق التصنيف (Classification Logic)h2
+            pبناءً على النتيجة النهائية، يتم تصنيف حالة النظام واتخاذ الإجراءاتp
+            ul
+                li
+                    span style=color#22c55e; font-weightbold;✅ آمن (SAFE)span إذا كانت النتيجة  20. (متابعة روتينية).
+                li
+                li
+                    span style=color#eab308; font-weightbold;⚠️ تحذير (WARNING)span إذا كانت النتيجة بين 20 و 50. (يتطلب مراجعة).
+                li
+                li
+                    span style=color#ef4444; font-weightbold;🚨 خطر (DANGER)span إذا كانت النتيجة  50. (إيقاف فوري واستدعاء الصيانة).
+                li
+            ul
+        section
 
-        <table class="report-table no-border">
-            <tr>
-                <td style="width: 20%; font-weight: bold;">Vendor/ Name Eng:</td>
-                <td style="border-bottom: 1px solid #000;"><span id="out_vendor_eng"></span></td>
-            </tr>
-            <tr>
-                <td style="font-weight: bold;">Vendor/ Name Arab:</td>
-                <td style="border-bottom: 1px solid #000; text-align: right;"><span id="out_vendor_arab"></span></td>
-            </tr>
-        </table>
-        <br>
+        footer style=margin-top 50px; text-align center; font-size 0.9em; color #888; border-top 1px solid #ddd; padding-top 20px;
+            تم إنشاء هذا التقرير آلياً بواسطة نظام الذكاء الاصطناعي للمراقبة الطبية
+        footer
+    div
 
-        <table class="report-table" style="text-align: center;">
-            <thead style="background-color: #f0f0f0;">
-                <tr>
-                    <th>S.N</th>
-                    <th>Site Ref.#</th>
-                    <th>FGC PO#</th>
-                    <th>Invoice #</th>
-                    <th>Inv. Date</th>
-                    <th>Amount</th>
-                    <th>VAT</th>
-                    <th>Total Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td><span id="out_site_ref"></span></td>
-                    <td><span id="out_fgc_po"></span></td>
-                    <td><span id="out_inv_num"></span></td>
-                    <td><span id="out_inv_date"></span></td>
-                    <td><span id="out_amount"></span></td>
-                    <td><span id="out_vat"></span></td>
-                    <td><span id="out_total_row"></span></td>
-                </tr>
-                <tr>
-                    <td colspan="7" style="text-align: right; font-weight: bold;">TOTAL AMOUNT</td>
-                    <td style="font-weight: bold;"><span id="out_total_final"></span></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div style="margin: 10px 0;">
-            <b>In Word (SAR):</b> <span id="out_words" style="text-decoration: underline;"></span>
-        </div>
-
-        <div style="margin: 20px 0; border: 1px solid #000; padding: 10px;">
-            <b>The Report:</b><br>
-            Material has been Requested by the site as per the purchase Order and work has to be done as per attachments from the site.
-        </div>
-
-        <div class="signatures">
-            <div class="signature-box">
-                <b>Prepared By:</b>
-                <br><br><br>
-                Name: <span id="out_prepared"></span>
-            </div>
-            <div class="signature-box">
-                <b>Approved By:</b>
-                <br><br><br>
-                Name: <b>Mahmoud Sarhan</b><br>
-                Medical Maintenance Projects Manager
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // دالة التبديل بين التبويبات
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            
-            document.getElementById(tabName + '-tab').classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        // ================== إدارة الإعدادات (Local Storage) ==================
-        function saveSettings() {
-            const settings = {
-                division: document.getElementById('set_division').value,
-                section: document.getElementById('set_section').value,
-                project: document.getElementById('set_project').value,
-                site: document.getElementById('set_site').value,
-                site_ref: document.getElementById('set_site_ref').value,
-                prepared: document.getElementById('set_prepared').value,
-                vat_rate: document.getElementById('set_vat_rate').value
-            };
-            localStorage.setItem('invoiceSettings', JSON.stringify(settings));
-            alert('تم حفظ الإعدادات بنجاح!');
-            calculateFinancials(); // إعادة الحساب في حال تغيرت النسبة
-        }
-
-        function loadSettings() {
-            const saved = localStorage.getItem('invoiceSettings');
-            if (saved) {
-                const settings = JSON.parse(saved);
-                document.getElementById('set_division').value = settings.division || '';
-                document.getElementById('set_section').value = settings.section || '';
-                document.getElementById('set_project').value = settings.project || '';
-                document.getElementById('set_site').value = settings.site || '';
-                document.getElementById('set_site_ref').value = settings.site_ref || '';
-                document.getElementById('set_prepared').value = settings.prepared || '';
-                document.getElementById('set_vat_rate').value = settings.vat_rate || '15';
-            } else {
-                // قيم افتراضية
-                document.getElementById('set_vat_rate').value = '15';
-            }
-        }
-
-        // ================== الحسابات المالية والتفقيط ==================
-        function calculateFinancials() {
-            const amount = parseFloat(document.getElementById('in_amount').value) || 0;
-            const vatRate = parseFloat(document.getElementById('set_vat_rate').value) || 15;
-            
-            const vat = amount * (vatRate / 100);
-            const total = amount + vat;
-
-            // تحديث الواجهة
-            document.getElementById('vat_display_rate').innerText = `(${vatRate}%)`;
-            document.getElementById('in_vat').value = vat.toFixed(2);
-            document.getElementById('in_total').value = total.toFixed(2);
-            
-            // تحويل الرقم إلى كلمات
-            document.getElementById('in_words').value = tafqeet(total);
-        }
-
-        // دالة تفقيط بسيطة وفعالة للريال السعودي
-        function tafqeet(number) {
-            if (number === 0) return "";
-            
-            const parts = number.toFixed(2).toString().split('.');
-            const riyals = parseInt(parts[0]);
-            const halalas = parseInt(parts[1]);
-
-            let text = "فقط ";
-            
-            if (riyals > 0) {
-                text += numberToText(riyals) + " ريال سعودي";
-            }
-            
-            if (halalas > 0) {
-                if (riyals > 0) text += " و ";
-                text += numberToText(halalas) + " هللة";
-            }
-            
-            text += " لا غير";
-            return text;
-        }
-
-        function numberToText(n) {
-            const units = ["", "واحد", "اثنان", "ثلاثة", "أربعة", "خمسة", "ستة", "سبعة", "ثمانية", "تسعة"];
-            const teens = ["عشرة", "أحد عشر", "اثنا عشر", "ثلاثة عشر", "أربعة عشر", "خمسة عشر", "ستة عشر", "سبعة عشر", "ثمانية عشر", "تسعة عشر"];
-            const tens = ["", "", "عشرون", "ثلاثون", "أربعون", "خمسون", "ستون", "سبعون", "ثمانون", "تسعون"];
-            const hundreds = ["", "مائة", "مائتان", "ثلاثمائة", "أربعمائة", "خمسمائة", "ستمائة", "سبعمائة", "ثمانمائة", "تسعمائة"];
-            const thousands = ["", "ألف", "ألفان", "ثلاثة آلاف", "أربعة آلاف", "خمسة آلاف", "ستة آلاف", "سبعة آلاف", "ثمانية آلاف", "تسعة آلاف"];
-
-            if (n < 10) return units[n];
-            if (n < 20) return teens[n - 10];
-            if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 ? " و" + units[n % 10] : "");
-            if (n < 1000) return hundreds[Math.floor(n / 100)] + (n % 100 ? " و" + numberToText(n % 100) : "");
-            if (n < 10000) return thousands[Math.floor(n / 1000)] + (n % 1000 ? " و" + numberToText(n % 1000) : "");
-            if (n < 1000000) {
-                let k = Math.floor(n / 1000);
-                let textK = k > 10 ? numberToText(k) + " ألف" : numberToText(k * 1000); // تبسيط للألوف المركبة
-                if (k > 2 && k <= 10) textK = thousands[k]; // حالة خاصة 3-10 آلاف
-                return textK + (n % 1000 ? " و" + numberToText(n % 1000) : "");
-            }
-            return n; // للأرقام الكبيرة جداً نرجع الرقم كما هو لتجنب التعقيد الزائد
-        }
-
-        // ================== الطباعة ==================
-        function printReport() {
-            // 1. جلب الإعدادات المحفوظة أو من الحقول
-            const division = document.getElementById('set_division').value;
-            const section = document.getElementById('set_section').value;
-            const project = document.getElementById('set_project').value;
-            const site = document.getElementById('set_site').value;
-            const siteRef = document.getElementById('set_site_ref').value;
-            const prepared = document.getElementById('set_prepared').value;
-
-            // 2. تعبئة التقرير بالبيانات الثابتة
-            document.getElementById('out_division').innerText = division;
-            document.getElementById('out_section').innerText = section;
-            document.getElementById('out_project').innerText = project;
-            document.getElementById('out_site').innerText = site;
-            document.getElementById('out_site_ref').innerText = siteRef;
-            document.getElementById('out_prepared').innerText = prepared;
-
-            // 3. تعبئة التقرير بالبيانات المتغيرة
-            document.getElementById('out_date').innerText = document.getElementById('in_date').value;
-            document.getElementById('out_vendor_eng').innerText = document.getElementById('in_vendor_eng').value;
-            document.getElementById('out_vendor_arab').innerText = document.getElementById('in_vendor_arab').value;
-            document.getElementById('out_fgc_po').innerText = document.getElementById('in_fgc_po').value;
-            document.getElementById('out_inv_num').innerText = document.getElementById('in_inv_num').value;
-            document.getElementById('out_inv_date').innerText = document.getElementById('in_inv_date').value;
-
-            // 4. تعبئة الأرقام المالية
-            document.getElementById('out_amount').innerText = document.getElementById('in_amount').value;
-            document.getElementById('out_vat').innerText = document.getElementById('in_vat').value;
-            document.getElementById('out_total_row').innerText = document.getElementById('in_total').value;
-            document.getElementById('out_total_final').innerText = document.getElementById('in_total').value;
-            document.getElementById('out_words').innerText = document.getElementById('in_words').value;
-
-            window.print();
-        }
-
-        // عند تحميل الصفحة
-        window.onload = function() {
-            loadSettings();
-            // وضع تاريخ اليوم كافتراضي
-            document.getElementById('in_date').valueAsDate = new Date();
-        };
-    </script>
-</body>
-</html>
+body
+html
